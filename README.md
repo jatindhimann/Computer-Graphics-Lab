@@ -1,0 +1,2 @@
+## Computer Graphics Lab
+UIET PANJAB UNIVERSITY, CHANDIGARH
