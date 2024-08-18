@@ -1,0 +1,20 @@
+# depslib dependency file v1.0
+1723209224 source:c:\users\jatin dhiman\desktop\computer graphics lab\lab1\5-draw a rectangle\main.cpp
+	<iostream>
+	<GL/glu.h>
+	<GL/glut.h>
+
+1723133129 c:\program files (x86)\codeblocks\mingw\mingw32\include\gl\glut.h
+	"freeglut_std.h"
+
+1723133129 c:\program files (x86)\codeblocks\mingw\mingw32\include\gl\freeglut_std.h
+	<windows.h>
+	<EGL/egl.h>
+	<GLES/gl.h>
+	<GLES2/gl2.h>
+	<OpenGL/gl.h>
+	<OpenGL/glu.h>
+	<GL/gl.h>
+	<GL/glu.h>
+	<stdlib.h>
+

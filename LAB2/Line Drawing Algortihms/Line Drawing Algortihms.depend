@@ -1,0 +1,20 @@
+# depslib dependency file v1.0
+1723990468 source:c:\users\jatin dhiman\desktop\computer graphics lab\lab2\line drawing algortihms\main.cpp
+	<GL/glut.h>
+	<iostream>
+	<vector>
+
+1723133129 c:\program files (x86)\codeblocks\mingw\mingw32\include\gl\glut.h
+	"freeglut_std.h"
+
+1723133129 c:\program files (x86)\codeblocks\mingw\mingw32\include\gl\freeglut_std.h
+	<windows.h>
+	<EGL/egl.h>
+	<GLES/gl.h>
+	<GLES2/gl2.h>
+	<OpenGL/gl.h>
+	<OpenGL/glu.h>
+	<GL/gl.h>
+	<GL/glu.h>
+	<stdlib.h>
+
