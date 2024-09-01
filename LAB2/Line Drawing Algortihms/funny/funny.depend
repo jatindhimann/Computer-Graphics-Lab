@@ -1,10 +1,7 @@
 # depslib dependency file v1.0
-1724305040 source:c:\users\jatin dhiman\desktop\computer graphics lab\lab2\line drawing algortihms\main.cpp
+1724770361 source:c:\users\jatin dhiman\desktop\computer graphics lab\lab2\line drawing algortihms\funny\main.cpp
 	<GL/glut.h>
-	<iostream>
-	<sstream>
 	<cmath>
-	<vector>
 
 1723133129 c:\program files (x86)\codeblocks\mingw\mingw32\include\gl\glut.h
 	"freeglut_std.h"
@@ -19,6 +16,4 @@
 	<GL/gl.h>
 	<GL/glu.h>
 	<stdlib.h>
-
-1724259472 c:\users\jatin dhiman\desktop\computer graphics lab\lab2\line drawing algortihms\pch.h
 

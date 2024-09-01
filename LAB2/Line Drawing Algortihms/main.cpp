@@ -1,200 +1,264 @@
 #include <GL/glut.h>
 #include <iostream>
+#include <sstream>
+#include <cmath>
 #include <vector>
-
 using namespace std;
 
 class Point {
-    int x, y;
+public:
+    int x;
+    int y;
+
+    Point(int x = 0, int y = 0) : x(x), y(y) {}
 };
 
-vector<Point> points; // Stores the clicked points
-int lineAlgorithm = 0; // 0 for Simple DDA, 1 for Symmetric DDA, 2 for Bresenham, 3 for Midpoint
+class Line {
+public:
+    void drawSimpleDDA(Point startPoint, Point endPoint);
+    void drawBresenham(Point startPoint, Point endPoint);
+    void drawMidpoint(Point startPoint, Point endPoint);
+    void drawDottedDDA(Point startPoint, Point endPoint);
+    void dashedDDA(Point startPoint, Point endPoint);
 
-void drawPixel(int x, int y) {
-    glBegin(GL_POINTS);
-    glVertex2i(x, y);
-    glEnd();
-}
+private:
+    void drawPixel(int x, int y);
+};
 
-// Simple DDA Algorithm
-void simpleDDA(Point p1, Point p2) {
-    int dx = p2.x - p1.x;
-    int dy = p2.y - p1.y;
-    int steps = max(abs(dx), abs(dy));
-    float xInc = dx / (float)steps;
-    float yInc = dy / (float)steps;
-    float x = p1.x;
-    float y = p1.y;
+// Global variables
+int windowWidth = 800;
+int windowHeight = 600;
+int selectedAlgorithm = 1;
+Line lineDrawer;
 
-    for (int i = 0; i <= steps; i++) {
-        drawPixel(x, y);
-        x += xInc;
-        y += yInc;
-    }
-}
+void ClearScreen();
+void DisplayText(string text, int x, int y, int font);
 
-// Symmetric DDA Algorithm
-void symmetricDDA(Point p1, Point p2) {
-    int dx = p2.x - p1.x;
-    int dy = p2.y - p1.y;
-    int L = max(abs(dx), abs(dy));
+vector<Point> clickedPoints;
 
-    // Step increments
-    float xInc = (float)dx / L;
-    float yInc = (float)dy / L;
+void HandleMouseClick(int button, int state, int x, int y) {
+    y = -y + windowHeight;
 
-    // Start point
-    float x = p1.x + 0.5 * ((dx > 0) ? 1 : -1);
-    float y = p1.y + 0.5 * ((dy > 0) ? 1 : -1);
+    if (state == GLUT_UP) return;
 
-    for (int i = 0; i <= L; i++) {
-        drawPixel(x, y);
-        x += xInc;
-        y += yInc;
-    }
-}
+    if (clickedPoints.size() % 2 == 0)
+        clickedPoints.push_back(Point(x, y));
+    else {
+        clickedPoints.push_back(Point(x, y));
 
-// Bresenham's Algorithm
-void Bresenham(Point p1, Point p2) {
-    int x = p1.x;
-    int y = p1.y;
-    int dx = abs(p2.x - p1.x);
-    int dy = abs(p2.y - p1.y);
-    int sx = p1.x < p2.x ? 1 : -1;
-    int sy = p1.y < p2.y ? 1 : -1;
-    int err = dx - dy;
+        stringstream ss;
+        ss << "(" << clickedPoints[0].x << "," << clickedPoints[0].y << ")";
+        string text = ss.str();
+        DisplayText(text, clickedPoints[0].x - 10, clickedPoints[0].y - 10, 2);
 
-    while (true) {
-        drawPixel(x, y);
-        if (x == p2.x && y == p2.y) break;
-        int e2 = 2 * err;
-        if (e2 > -dy) {
-            err -= dy;
-            x += sx;
+        ss.str("");
+        ss << "(" << clickedPoints[1].x << "," << clickedPoints[1].y << ")";
+        text = ss.str();
+        DisplayText(text, clickedPoints[1].x + 10, clickedPoints[1].y + 10, 2);
+
+        Point startPoint = clickedPoints[0];
+        Point endPoint = clickedPoints[1];
+
+        if (button == GLUT_LEFT_BUTTON) {
+            switch (selectedAlgorithm) {
+                case 1:
+                    lineDrawer.drawSimpleDDA(startPoint, endPoint);
+                    DisplayText("SIMPLE_DDA_LINE", 50, windowHeight - 50, 3);
+                    break;
+                case 2:
+                    lineDrawer.drawBresenham(startPoint, endPoint);
+                    DisplayText("BRESENHAM_LINE", 50, windowHeight - 50, 3);
+                    break;
+                case 3:
+                    break;
+                case 4:
+                    lineDrawer.drawDottedDDA(startPoint, endPoint);
+                    DisplayText("Dotted DDA", 50, windowHeight - 50, 3);
+                    break;
+                case 5:
+                    lineDrawer.dashedDDA(startPoint, endPoint);
+                    DisplayText("Dashed DDA", 50, windowHeight - 50, 3);
+                    break;
+            }
         }
-        if (e2 < dx) {
-            err += dx;
-            y += sy;
-        }
+
+        glFlush();
+        clickedPoints.clear();
     }
 }
 
-// Midpoint Line Algorithm
-void Midpoint(Point p1, Point p2) {
-    int dx = p2.x - p1.x;
-    int dy = p2.y - p1.y;
-    int d = dy - (dx / 2);
-    int x = p1.x, y = p1.y;
 
-    drawPixel(x, y);
-    while (x < p2.x) {
-        x++;
-        if (d < 0) {
-            d = d + dy;
-        } else {
-            d += (dy - dx);
-            y++;
-        }
-        drawPixel(x, y);
-    }
-}
-
-// Display function to draw the line based on selected algorithm
-void display() {
+void ClearScreen() {
+    glClearColor(0.2, 0.2, 0.2, 1);
     glClear(GL_COLOR_BUFFER_BIT);
-
-    if (points.size() == 2) {
-        if (lineAlgorithm == 0) {
-            simpleDDA(points[0], points[1]);
-        } else if (lineAlgorithm == 1) {
-            symmetricDDA(points[0], points[1]);
-        } else if (lineAlgorithm == 2) {
-            Bresenham(points[0], points[1]);
-        } else if (lineAlgorithm == 3) {
-            Midpoint(points[0], points[1]);
-        }
-        points.clear(); // Clear points after drawing the line
-    }
-
+    glColor3f(1, 0.5, 0);
+    clickedPoints.clear();
     glFlush();
 }
 
-// Mouse function to capture the points on screen
-void mouse(int button, int state, int x, int y) {
-    if (button == GLUT_LEFT_BUTTON && state == GLUT_DOWN) {
-        Point p = {x, 500 - y}; // Adjust y-coordinate for OpenGL
-        points.push_back(p);
+void Initialize() {
+    glutInitWindowPosition(0, 0);
+    glutInitWindowSize(windowWidth, windowHeight);
+    glutCreateWindow("LINE DRAWING ALGORITHMS");
 
-        if (points.size() == 2) {
-            glutPostRedisplay(); // Trigger the display function to draw the line
+    glMatrixMode(GL_PROJECTION);
+    gluOrtho2D(0, windowWidth, 0, windowHeight);
+
+    ClearScreen();
+    glFlush();
+}
+
+void Display(){}
+
+// Display text on the screen
+void DisplayText(string text, int x, int y, int font) {
+    glColor3f(0, 1, 0); // Green color for text
+    glRasterPos2f(x, y);
+    size_t len = text.length();
+    for (int i = 0; i < len; i++)
+        glutBitmapCharacter(GLUT_BITMAP_TIMES_ROMAN_10, (int)text[i]);
+
+    glColor3f(1, 0.5, 0); // Orange color for future drawing
+}
+
+// Implement the drawPixel function
+void Line::drawPixel(int x, int y) {
+    glBegin(GL_POINTS);
+    glVertex2i(x, y);
+    glEnd();
+    glFlush();
+}
+
+// Implement the Simple DDA line drawing algorithm
+void Line::drawSimpleDDA(Point startPoint, Point endPoint) {
+    int deltaX = endPoint.x - startPoint.x;
+    int deltaY = endPoint.y - startPoint.y;
+
+    float steps = max(abs(deltaX), abs(deltaY));
+    float xIncrement = deltaX / steps;
+    float yIncrement = deltaY / steps;
+
+    float x = startPoint.x;
+    float y = startPoint.y;
+
+    drawPixel(round(x), round(y));
+
+    for (int i = 1; i <= steps; i++) {
+        x += xIncrement;
+        y += yIncrement;
+        drawPixel(round(x), round(y));
+    }
+}
+
+void Line::drawDottedDDA(Point startPoint, Point endPoint) {
+    int deltaX = endPoint.x - startPoint.x;
+    int deltaY = endPoint.y - startPoint.y;
+
+    float steps = max(abs(deltaX), abs(deltaY));
+    float xIncrement = deltaX / steps;
+    float yIncrement = deltaY / steps;
+
+    float x = startPoint.x;
+    float y = startPoint.y;
+
+    drawPixel(round(x), round(y));
+
+    for (int i = 1; i <= steps; i++) {
+        x += xIncrement;
+        y += yIncrement;
+        if(i % 10 == 0)
+        {
+            drawPixel(round(x), round(y));
         }
     }
 }
 
-// OpenGL Initialization
-void init() {
-    glClearColor(1.0, 1.0, 1.0, 1.0);
-    glColor3f(0.0, 0.0, 0.0);
-    glPointSize(3.0);
-    glMatrixMode(GL_PROJECTION);
-    glLoadIdentity();
-    gluOrtho2D(0.0, 500.0, 0.0, 500.0);
-}
+void Line::dashedDDA(Point startPoint, Point endPoint) {
+    int deltaX = endPoint.x - startPoint.x;
+    int deltaY = endPoint.y - startPoint.y;
 
-// Print Menu for selecting algorithm
-void printMenu() {
-    cout << "Select Line Drawing Algorithm:\n";
-    cout << "1. Simple DDA\n";
-    cout << "2. Symmetric DDA\n";
-    cout << "3. Bresenham\n";
-    cout << "4. Midpoint\n";
-    cout << "Enter your choice: ";
-}
+    float steps = max(abs(deltaX), abs(deltaY));
+    float xIncrement = deltaX / steps;
+    float yIncrement = deltaY / steps;
 
-// Function to capture user's choice of algorithm
-void selectAlgorithm() {
-    int choice;
-    cin >> choice;
-    switch (choice) {
-        case 1:
-            lineAlgorithm = 0;
-            cout << "Simple DDA Algorithm selected.\n";
-            break;
-        case 2:
-            lineAlgorithm = 1;
-            cout << "Symmetric DDA Algorithm selected.\n";
-            break;
-        case 3:
-            lineAlgorithm = 2;
-            cout << "Bresenham Algorithm selected.\n";
-            break;
-        case 4:
-            lineAlgorithm = 3;
-            cout << "Midpoint Algorithm selected.\n";
-            break;
-        default:
-            cout << "Invalid choice! Defaulting to Simple DDA.\n";
-            lineAlgorithm = 0;
+    float x = startPoint.x;
+    float y = startPoint.y;
+    int count = 0;
+    drawPixel(round(x), round(y));
+
+    for (int i = 1; i <= steps; i++) {
+        x += xIncrement;
+        y += yIncrement;
+
+        if(count < 5){
+            drawPixel(round(x), round(y));
+        }
+
+        if(count == 10){
+            count = 0;
+        }
+        count++;
     }
 }
 
-// Main function to set up OpenGL and GLUT
-int main(int argc, char** argv) {
-    printMenu();
-    selectAlgorithm();
+void Line::drawBresenham(Point startPoint, Point endPoint) {
+	int dx = endPoint.x-startPoint.x;
+	int dy = endPoint.y-startPoint.y;
+	int pk = 2*dy-dx;
+	int pi = pk;
+	int xi = startPoint.x,yi=startPoint.y;
 
-    glutInit(&argc, argv);
-    glutInitDisplayMode(GLUT_SINGLE | GLUT_RGB);
-    glutInitWindowSize(500, 500);
-    glutInitWindowPosition(100, 100);
-    glutCreateWindow("Line Drawing Algorithms");
+	while(xi<=endPoint.x&&yi<=endPoint.y) {
+			drawPixel(xi,yi);
+    		if(pi<0) {
+    			pi = pk + 2*dy;
+    			xi = xi+1;
+    			yi = yi;
+    		}
+    		else {
+    			pi = pk + 2*(dy-dx);
+    			xi = xi+1;
+    			yi = yi+1;
+    		}
+	}
+}
 
-    init();
+// Main function with a menu
+int main(int argc, char **argv) {
+    cout << "****************[MENU]***************\n" << endl;
+    cout << "1. DDA Line Algorithm\n";
+    cout << "2. Bresenham Line Algorithm\n";
+    cout << "3. Midpoint Line Algorithm\n";
+    cout<< "4. Dotted DDA Algorithm\n";
+    cout<< "5. Dashed DDA Algorithm\n";
+    cout << "6. Exit\n";
 
-    glutDisplayFunc(display);
-    glutMouseFunc(mouse);
+    int userChoice;
+    do {
+        cout << "\nEnter your choice: ";
+        cin >> userChoice;
 
-    glutMainLoop();
+        switch (userChoice) {
+            case 1:
+            case 2:
+            case 3:
+            case 4:
+            case 5:
+                selectedAlgorithm = userChoice;
+                glutInit(&argc, argv);
+                Initialize();
+                glutDisplayFunc(Display);
+                glutMouseFunc(HandleMouseClick);
+                glutMainLoop();
+                break;
+            case 6:
+                cout << "Exiting..." << endl;
+                return 0;
+            default:
+                cout << "Invalid choice! Please choose again." << endl;
+                break;
+        }
+    } while (userChoice != 4);
+
     return 0;
 }
