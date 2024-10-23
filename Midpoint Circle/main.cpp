@@ -2,35 +2,31 @@
 #include <iostream>
 #include <cmath>
 
+using namespace std;
 
-int xCenter, yCenter, radius;
-bool clicked = false;
+int pntX1, pntY1, r1;
 
-void setPixel(int x, int y) {
+void plot(int x, int y) {
     glBegin(GL_POINTS);
-    glVertex2i(x, y);
+    glVertex2i(x + pntX1, y + pntY1);
     glEnd();
 }
 
-void circlePlotPoints(int xCenter, int yCenter, int x, int y) {
-    setPixel(xCenter + x, yCenter + y);
-    setPixel(xCenter - x, yCenter + y);
-    setPixel(xCenter + x, yCenter - y);
-    setPixel(xCenter - x, yCenter - y);
-    setPixel(xCenter + y, yCenter + x);
-    setPixel(xCenter - y, yCenter + x);
-    setPixel(xCenter + y, yCenter - x);
-    setPixel(xCenter - y, yCenter - x);
-}
-
-void circleMidpoint(int xCenter, int yCenter, int radius) {
+void midPointCircleAlgo(int r) {
     int x = 0;
-    int y = radius;
-    int p = 1 - radius;
+    int y = r;
+    float p = 1 - r;
 
-    circlePlotPoints(xCenter, yCenter, x, y);
+    while (x <= y) {
+        plot(x, y);
+        plot(y, x);
+        plot(-x, y);
+        plot(-y, x);
+        plot(-x, -y);
+        plot(-y, -x);
+        plot(x, -y);
+        plot(y, -x);
 
-    while (x < y) {
         x++;
         if (p < 0) {
             p += 2 * x + 1;
@@ -38,50 +34,40 @@ void circleMidpoint(int xCenter, int yCenter, int radius) {
             y--;
             p += 2 * (x - y) + 1;
         }
-        circlePlotPoints(xCenter, yCenter, x, y);
     }
 }
 
-void mouse(int button, int state, int x, int y) {
-    if (button == GLUT_LEFT_BUTTON && state == GLUT_DOWN && !clicked) {
-        xCenter = x - 250; // Adjusting to window center
-        yCenter = 250 - y; // Adjusting to window center
-        clicked = true;
-    } else if (button == GLUT_LEFT_BUTTON && state == GLUT_DOWN && clicked) {
-        radius = sqrt((x - (xCenter + 250)) * (x - (xCenter + 250)) +
-                      (y - (250 - yCenter)) * (y - (250 - yCenter)));
-        glutPostRedisplay();
-        clicked = false;
-    }
-}
-
-void display() {
+void myDisplay(void) {
     glClear(GL_COLOR_BUFFER_BIT);
-    if (radius > 0) {
-        circleMidpoint(xCenter, yCenter, radius);
-    }
+    glColor3f(0.0, 0.0, 0.0);
+    glPointSize(1.0);
+    midPointCircleAlgo(r1);
     glFlush();
 }
 
-void init() {
-    glClearColor(1.0, 1.0, 1.0, 1.0);
-    glColor3f(0.0, 0.0, 0.0);
-    glPointSize(2.0);
+void myInit(void) {
+    glClearColor(1.0, 1.0, 1.0, 0.0);
+    glColor3f(0.0f, 0.0f, 0.0f);
+    glPointSize(1.0);
     glMatrixMode(GL_PROJECTION);
     glLoadIdentity();
-    gluOrtho2D(-250, 250, -250, 250);
+    gluOrtho2D(0.0, 640.0, 0.0, 480.0);
 }
 
 int main(int argc, char** argv) {
+    cout << "Enter the coordinates of the center:\n" << endl;
+    cout<<"Enter Center of Circle"<<endl;
+    cout << " X-coordinate: "; cin >> pntX1;
+    cout << " Y-coordinate: "; cin >> pntY1;
+    cout << "Enter radius: "; cin >> r1;
+
     glutInit(&argc, argv);
     glutInitDisplayMode(GLUT_SINGLE | GLUT_RGB);
-    glutInitWindowSize(500, 500);
-    glutInitWindowPosition(100, 100);
-    glutCreateWindow("Midpoint Circle Algorithm");
-
-    init();
-    glutDisplayFunc(display);
-    glutMouseFunc(mouse);
+    glutInitWindowSize(640, 480);
+    glutInitWindowPosition(100, 150);
+    glutCreateWindow("Circle Drawing with Fill");
+    glutDisplayFunc(myDisplay);
+    myInit();
     glutMainLoop();
     return 0;
 }
