@@ -1,8 +1,19 @@
 # depslib dependency file v1.0
-1726111185 source:c:\users\jatin dhiman\desktop\computer graphics lab\polygon fill\main.cpp
-	<GL/glut.h>
+1729737329 source:c:\users\jatin dhiman\onedrive\desktop\computer graphics lab\polygon clipping\weiler atherton\main.cpp
 	<iostream>
+	<cstring>
+	<cstdio>
+	<fstream>
+	<cstdlib>
+	<ctime>
 	<cmath>
+	<vector>
+	<list>
+	<algorithm>
+	<functional>
+	<GL/glut.h>
+	<GL/glu.h>
+	<GL/gl.h>
 
 1723133129 c:\program files (x86)\codeblocks\mingw\mingw32\include\gl\glut.h
 	"freeglut_std.h"
@@ -17,11 +28,4 @@
 	<GL/gl.h>
 	<GL/glu.h>
 	<stdlib.h>
-
-1729749371 source:c:\users\jatin dhiman\onedrive\desktop\computer graphics lab\polygon fill\main.cpp
-	<GL/glut.h>
-	<iostream>
-	<cmath>
-	<vector>
-	<algorithm>
 

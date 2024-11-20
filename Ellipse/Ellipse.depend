@@ -1,8 +1,7 @@
 # depslib dependency file v1.0
-1726111185 source:c:\users\jatin dhiman\desktop\computer graphics lab\polygon fill\main.cpp
+1731917110 source:c:\users\jatin dhiman\ellipse\main.cpp
 	<GL/glut.h>
 	<iostream>
-	<cmath>
 
 1723133129 c:\program files (x86)\codeblocks\mingw\mingw32\include\gl\glut.h
 	"freeglut_std.h"
@@ -17,11 +16,4 @@
 	<GL/gl.h>
 	<GL/glu.h>
 	<stdlib.h>
-
-1729749371 source:c:\users\jatin dhiman\onedrive\desktop\computer graphics lab\polygon fill\main.cpp
-	<GL/glut.h>
-	<iostream>
-	<cmath>
-	<vector>
-	<algorithm>
 
