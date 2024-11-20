@@ -1,0 +1,20 @@
+# depslib dependency file v1.0
+1732141315 source:c:\users\jatin dhiman\onedrive\desktop\computer graphics lab\line clipping\liang barsky\main.cpp
+	<iostream>
+	<vector>
+	<GL/glut.h>
+
+1723133129 c:\program files (x86)\codeblocks\mingw\mingw32\include\gl\glut.h
+	"freeglut_std.h"
+
+1723133129 c:\program files (x86)\codeblocks\mingw\mingw32\include\gl\freeglut_std.h
+	<windows.h>
+	<EGL/egl.h>
+	<GLES/gl.h>
+	<GLES2/gl2.h>
+	<OpenGL/gl.h>
+	<OpenGL/glu.h>
+	<GL/gl.h>
+	<GL/glu.h>
+	<stdlib.h>
+

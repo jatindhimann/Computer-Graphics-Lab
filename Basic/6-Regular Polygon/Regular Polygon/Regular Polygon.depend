@@ -1,0 +1,20 @@
+# depslib dependency file v1.0
+1732142320 source:c:\users\jatin dhiman\onedrive\desktop\computer graphics lab\basic\6-regular polygon\regular polygon\main.cpp
+	<GL/glut.h>
+	<cmath>
+	<iostream>
+
+1723133129 c:\program files (x86)\codeblocks\mingw\mingw32\include\gl\glut.h
+	"freeglut_std.h"
+
+1723133129 c:\program files (x86)\codeblocks\mingw\mingw32\include\gl\freeglut_std.h
+	<windows.h>
+	<EGL/egl.h>
+	<GLES/gl.h>
+	<GLES2/gl2.h>
+	<OpenGL/gl.h>
+	<OpenGL/glu.h>
+	<GL/gl.h>
+	<GL/glu.h>
+	<stdlib.h>
+
